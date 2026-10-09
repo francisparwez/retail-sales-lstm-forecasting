@@ -1,0 +1,89 @@
+# ==============================
+# Python
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+ENV/
+
+# ==============================
+# Jupyter Notebook
+# ==============================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+# ==============================
+# Environment variables and secrets
+# ==============================
+.env
+.env.*
+!.env.example
+
+# ==============================
+# IDE and editor
+# ==============================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==============================
+# OS files
+# ==============================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==============================
+# Logs and temporary files
+# ==============================
+*.log
+*.tmp
+*.temp
+
+# ==============================
+# Test and coverage artifacts
+# ==============================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# ==============================
+# Machine learning artifacts
+# ==============================
+*.h5
+*.keras
+*.pkl
+*.pickle
+*.joblib
+*.onnx
+*.pt
+*.pth
+*.tflite
+checkpoints/
+mlruns/
+
+# ==============================
+# Generated outputs
+# ==============================
+outputs/
+reports/generated/
+
+# ==============================
+# Large competition datasets
+# ==============================
+# Keep dataset documentation, but do not commit raw CSV files.
+datasets/*.csv
+
+# ==============================
+# TensorFlow
+# ==============================
+logs/
