@@ -81,3 +81,9 @@ datasets/*.csv
 # TensorFlow
 # ==============================
 logs/
+
+# ==============================
+# Processed project outputs
+# ==============================
+# Keep outputs/processed/daily_sales.csv tracked for reproducible modelling.
+# Do not ignore outputs/processed/ or outputs/figures/.

@@ -8,35 +8,33 @@
 
 **Business context:** Historical retail sales forecasting using data from Corporación Favorita in Ecuador.
 
-**Current stage:** Task 1 — Project Setup & Exploratory Data Analysis completed.
+**Current stage:** Tasks 1 and 2 — Project Setup, Exploratory Data Analysis, and Data Preprocessing & Time Series Preparation completed.
 
-The project aims to investigate historical sales patterns, prepare a forecasting dataset, establish a baseline, and evaluate whether an LSTM neural network can produce useful sales forecasts.
+The project explores historical sales patterns and prepares a daily sales series for the next forecasting stages. A baseline and LSTM will be developed and compared later.
 
-## 2. Dataset Overview
+## 2. Source Dataset Overview
 
 The initial analysis was performed on `train.csv`.
 
-| Attribute                           |     Result |
-| ----------------------------------- | ---------: |
-| Total rows                          |  3,000,888 |
-| Total columns                       |          6 |
-| First date                          | 2013-01-01 |
-| Last date                           | 2017-08-15 |
-| Unique dates                        |      1,684 |
-| Unique stores                       |         54 |
-| Product families                    |         33 |
-| Missing values in inspected columns |          0 |
+| Attribute                                  |     Result |
+| ------------------------------------------ | ---------: |
+| Total rows                                 |  3,000,888 |
+| Total columns                              |          6 |
+| First date                                 | 2013-01-01 |
+| Last date                                  | 2017-08-15 |
+| Unique observed dates                      |      1,684 |
+| Unique stores                              |         54 |
+| Product families                           |         33 |
+| Missing values in inspected source columns |          0 |
 
-### Columns
+### Source columns
 
 - `id` — row identifier.
 - `date` — date of the sales observation.
 - `store_nbr` — store identifier.
 - `family` — product family.
 - `sales` — sales value.
-- `onpromotion` — number of items on promotion, as represented in the dataset.
-
-The initial inspection found no missing values in the six columns. Further validation will be needed when the data is prepared for forecasting.
+- `onpromotion` — promotion count as represented in the dataset.
 
 ## 3. Descriptive Sales Statistics
 
@@ -49,52 +47,68 @@ The initial inspection found no missing values in the six columns. Further valid
 | Maximum sales        |             124,717.00 |
 | Standard deviation   | Approximately 1,102.00 |
 
-The mean is substantially higher than the median, and the maximum is much larger than a typical observation. This indicates a strongly right-skewed sales distribution.
-
-These observations should be investigated in context. High values should not automatically be removed, because they may represent genuine sales activity.
+The row-level sales distribution is strongly right-skewed. High values should be investigated in context rather than automatically removed.
 
 ## 4. Key EDA Findings
 
 ### Sales distribution
 
-Sales are strongly right-skewed. The difference between the mean and median suggests that relatively high sales observations influence the overall distribution.
+The mean is substantially higher than the median, indicating a right-skewed distribution.
 
-### Daily sales trend
+### Daily trend and weekly patterns
 
-Aggregated daily sales show fluctuations and an overall upward pattern across the observed period. Additional analysis is needed to separate long-term trends from recurring calendar effects and other influences.
+Aggregated daily sales fluctuate and show an overall upward pattern. The initial weekday comparison showed relatively high sales on Saturday and Sunday, with Thursday lower in that analysis.
 
-### Weekly sales patterns
+### Store and product-family performance
 
-The initial weekday comparison shows relatively high aggregated sales on Saturday and Sunday, with Thursday lower in the current analysis. This pattern should be re-examined during time series preparation.
+Store 44 led the top-store comparison by cumulative sales. GROCERY I, BEVERAGES, and PRODUCE were the leading product families by cumulative sales in the initial analysis.
 
-### Store performance
+### Holiday/event comparison
 
-Store 44 has the highest cumulative sales among the top stores displayed in the EDA comparison. Store-level differences may be relevant when deciding how to construct the forecasting dataset.
+The preliminary comparison reported average daily sales of approximately 694,431 on dates marked as holidays/events and 627,548 on other dates. This is a descriptive association and does not establish causation.
 
-### Product-family performance
+## 5. Task 2 — Data Preprocessing
 
-The leading product families by cumulative sales are:
+### Work completed
 
-1. GROCERY I
-2. BEVERAGES
-3. PRODUCE
+- Converted `date` to datetime.
+- Checked data types, missing values, exact duplicate rows, and date coverage.
+- Aggregated sales across all stores and product families into a daily total.
+- Compared observed dates with a complete daily calendar.
+- Identified four missing dates: 25 December 2013, 2014, 2015, and 2016.
+- Matched these dates to Christmas Day entries in `holidays_events.csv`.
+- Created a continuous daily series from 2013-01-01 through 2017-08-15.
+- Validated the prepared series.
+- Plotted the daily series.
+- Saved and reloaded the CSV to verify its contents.
 
-These categories may be useful candidates for further investigation, but their ranking alone does not establish which product families are easiest to forecast.
+### Prepared dataset
 
-### Holiday and event dates
+**File:** `outputs/processed/daily_sales.csv`
 
-The preliminary comparison reported the following average daily sales:
+| Attribute                        |     Result |
+| -------------------------------- | ---------: |
+| Rows                             |      1,688 |
+| Columns                          |          2 |
+| First date                       | 2013-01-01 |
+| Last date                        | 2017-08-15 |
+| Missing values after preparation |          0 |
+| Duplicate dates                  |          0 |
+| Chronological order              |       True |
+| Consecutive daily intervals      |       True |
+| Negative daily sales values      |          0 |
 
-| Date category                       |   Average daily sales |
-| ----------------------------------- | --------------------: |
-| Dates not marked as holidays/events | Approximately 627,548 |
-| Dates marked as holidays/events     | Approximately 694,431 |
+The columns are `date` and `daily_sales`. Each row represents the sum of sales across all stores and product families for one calendar day.
 
-Average daily sales were higher on dates marked as holidays or events in this comparison. This is a descriptive association, not proof of causation. The comparison does not control for seasonality, event type, store closures, or other factors.
+### Missing Christmas dates: documented assumption
 
-## 5. Visualisations Generated
+The four missing dates were matched to national Christmas Day entries in the holiday calendar. The preprocessing code provisionally filled them with zero daily sales so the series has a continuous daily index.
 
-The EDA notebook generated six figures in `outputs/figures/`:
+These zero values are **not observed sales values**. The calendar match supports the hypothesis that the dates are absent because of the holiday, but it does not prove the reason. This treatment should be reconsidered before final model training and clearly retained as a limitation.
+
+## 6. Visualisations
+
+EDA figures saved in `outputs/figures/`:
 
 1. `01_sales_distribution.png`
 2. `02_daily_sales_trend.png`
@@ -103,45 +117,47 @@ The EDA notebook generated six figures in `outputs/figures/`:
 5. `05_top_product_families.png`
 6. `06_holiday_sales_comparison.png`
 
-These figures are referenced in the project README.
+The prepared daily sales plot is saved as:
 
-## 6. Current Project Status
+- `07_daily_sales_plot.png`
+
+## 7. Current Project Status
 
 ### Completed
 
-- Initial project setup and folder structure.
-- Collection of the initial dataset files.
-- Loading and inspection of the training dataset.
-- Review of data types, missing values, and date coverage.
-- Descriptive sales statistics.
+- Project structure and dataset collection.
+- Initial exploratory data analysis.
 - Six EDA visualisations.
-- Initial interpretation of sales distribution, trends, weekly patterns, store performance, product-family performance, and holiday/event comparisons.
-- Initial project documentation.
+- Data-quality checks and date conversion.
+- Daily sales aggregation.
+- Investigation of the four missing Christmas dates.
+- Continuous daily series construction and validation.
+- Prepared CSV export and reload verification.
+- Documentation updates for Tasks 1 and 2.
 
-### Not yet completed
+### Remaining
 
-- Data preprocessing and time series preparation.
-- Selection of the forecasting target and horizon.
-- Chronological training, validation, and test splits.
-- Baseline forecasting.
-- LSTM model development and training.
-- Model evaluation and optimisation.
-- Final forecast visualisations and conclusions.
+- Define the forecasting horizon and evaluation strategy.
+- Create chronological training, validation, and test splits.
+- Establish a baseline forecast.
+- Prepare sequential input windows.
+- Build and train the LSTM model.
+- Compare model performance with the baseline.
+- Visualise forecasts and document final conclusions.
 
-## 7. Next Steps
+## 8. Next Steps
 
-1. Inspect the supporting datasets and determine which features are appropriate for the forecasting objective.
-2. Define the sales target, aggregation level, and forecast horizon.
-3. Convert and validate date fields, and investigate relevant data-quality issues.
-4. Design chronological training, validation, and test splits to avoid future information leaking into training.
-5. Establish a simple baseline forecast.
-6. Prepare sequential data for LSTM training.
-7. Evaluate the LSTM against the baseline using appropriate metrics, including MAE and RMSE.
-8. Document results, limitations, and conclusions based on the measured performance.
+1. Decide the forecast horizon and evaluation period before modelling.
+2. Revisit the zero-sales assumption for missing Christmas dates.
+3. Define chronological training, validation, and test periods to avoid data leakage.
+4. Build a simple baseline forecast.
+5. Prepare sequential inputs for the LSTM.
+6. Evaluate forecasts using metrics such as MAE and RMSE.
+7. Compare the LSTM with the baseline and document limitations.
 
-## 8. Important Notes
+## 9. Data and Repository Notes
 
-- The current findings describe the initial EDA; they are not final modelling conclusions.
-- Raw CSV files remain local and are excluded from Git tracking.
-- The holiday/event comparison is preliminary and should not be interpreted causally.
-- No claim has been made that an LSTM will outperform a simpler forecasting approach. That conclusion must be based on evaluation results.
+- Raw CSV files remain local in `datasets/` and are excluded from Git.
+- The processed daily series is stored in `outputs/processed/daily_sales.csv`.
+- Figures are retained in `outputs/figures/` for use in the README.
+- `requirements.txt` currently lists the libraries used in Tasks 1 and 2; modelling dependencies will be added when required.

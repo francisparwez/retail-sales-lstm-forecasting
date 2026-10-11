@@ -6,7 +6,7 @@ This project explores historical retail sales data and aims to forecast future s
 
 The project uses the **Kaggle Store Sales – Time Series Forecasting** dataset, based on retail sales from Corporación Favorita in Ecuador. It follows a structured workflow, beginning with exploratory data analysis (EDA), followed by time series preparation, baseline forecasting, LSTM model development, and performance evaluation.
 
-The initial EDA stage has been completed using Python, Pandas, NumPy, and Matplotlib. The analysis examines sales distributions, historical trends, weekly patterns, store and product-family performance, and sales on holiday or event dates.
+The initial EDA and data preprocessing stages have been completed using Python, Pandas, NumPy, and Matplotlib. The project now includes six EDA visualisations and a prepared daily sales series, with the preprocessing steps and assumptions documented in the notebook.
 
 The project is being developed as a practical learning and portfolio project in time series analysis, deep learning, and predictive analytics.
 
@@ -81,9 +81,13 @@ Established the project structure, loaded the dataset, inspected its structure a
 
 The analysis includes sales distribution, daily trends, weekly patterns, top-performing stores, top product families, and a preliminary comparison of holiday/event dates with other dates.
 
-### Task 2: Data Preprocessing & Time Series Preparation — Pending
+### Task 2: Data Preprocessing & Time Series Preparation — Completed
 
-Prepare the data for forecasting, investigate relevant variables and potential data-quality issues, define the forecasting target and horizon, and create chronological training, validation, and test splits without data leakage.
+Converted the date column to datetime, checked data quality, aggregated sales across all stores and product families into one daily total, investigated four missing dates, and created a continuous daily series. The prepared dataset contains 1,688 daily observations and is saved to `outputs/processed/daily_sales.csv`.
+
+The four missing dates are Christmas Days in 2013–2016. They are provisionally represented as zero sales based on the holiday-calendar evidence; these values were not observed in the original sales data and should be reconsidered during modelling.
+
+The forecasting horizon, chronological training/validation/test splits, and final modelling strategy remain to be defined.
 
 ### Task 3: LSTM Model Development & Training — Pending
 
@@ -152,6 +156,32 @@ The completed EDA provides several useful starting points for the modelling stag
 
 These findings guide the next stage of investigation. They do not yet establish which variables or modelling approach will produce the best forecasts.
 
+## 🧹 Data Preprocessing & Time Series Preparation
+
+The preprocessing work was carried out in `notebooks/02_data_preprocessing.ipynb`.
+
+### Prepared Daily Sales Series
+
+Sales were aggregated across all stores and product families to create one total sales value per calendar day. The series covers **1 January 2013 to 15 August 2017**.
+
+- **Rows:** 1,688 daily observations
+- **Columns:** `date`, `daily_sales`
+- **Missing calendar dates found:** 4
+- **Missing values after calendar completion:** 0
+- **Duplicate dates:** 0
+- **Chronological order:** Confirmed
+- **Daily intervals:** Consistent
+
+The four missing dates were 25 December 2013, 2014, 2015, and 2016. Each matched a national Christmas holiday in `holidays_events.csv`. These dates were provisionally filled with zero daily sales to create a continuous calendar. This is an assumption rather than an observed sales value, so it must be reviewed before final model training.
+
+The exported CSV was reloaded and checked. Dates matched exactly, and sales values matched within floating-point tolerance.
+
+### Prepared Daily Sales Plot
+
+![Prepared Daily Sales Series](outputs/figures/07_daily_sales_plot.png)
+
+The plot provides a visual check of the prepared daily series, including its overall trend and day-to-day fluctuations. The zero-valued Christmas dates appear as sharp dips. These values should be interpreted in light of the documented assumption above rather than as directly recorded sales.
+
 ## 📊 Evaluation Strategy
 
 Model performance will be assessed using suitable forecasting metrics, including:
@@ -169,15 +199,19 @@ retail-sales-lstm-forecasting/
 ├── datasets/
 │   └── *.csv                         # Local raw datasets; excluded from Git
 ├── notebooks/
-│   └── 01_exploratory_data_analysis.ipynb
+│   ├── 01_exploratory_data_analysis.ipynb
+│   └── 02_data_preprocessing.ipynb
 ├── outputs/
+│   ├── processed/
+│   │   └── daily_sales.csv
 │   └── figures/
 │       ├── 01_sales_distribution.png
 │       ├── 02_daily_sales_trend.png
 │       ├── 03_weekly_sales_patterns.png
 │       ├── 04_top_stores.png
 │       ├── 05_top_product_families.png
-│       └── 06_holiday_sales_comparison.png
+│       ├── 06_holiday_sales_comparison.png
+│       └── 07_daily_sales_plot.png
 ├── CHANGE_LOG.md
 ├── README.md
 ├── requirements.txt
@@ -188,7 +222,7 @@ The `outputs/figures/` directory is tracked so the EDA visualisations can be dis
 
 ## ⚠️ Current Status
 
-**Stage:** Task 1 — Project Setup & Exploratory Data Analysis completed.
+**Stage:** Tasks 1 and 2 — Project Setup, Exploratory Data Analysis, and Data Preprocessing completed.
 
 - [x] Create the project repository.
 - [x] Establish the project folder structure.
@@ -198,7 +232,9 @@ The `outputs/figures/` directory is tracked so the EDA visualisations can be dis
 - [x] Calculate descriptive sales statistics.
 - [x] Generate and save six EDA visualisations.
 - [x] Document initial findings and limitations.
-- [ ] Complete data preprocessing and time series preparation.
+- [x] Complete data preprocessing and time series preparation.
+- [x] Create and validate a continuous daily sales series.
+- [x] Save and verify `outputs/processed/daily_sales.csv`.
 - [ ] Define the forecasting target and horizon.
 - [ ] Establish a baseline forecasting model.
 - [ ] Develop and train the LSTM model.
