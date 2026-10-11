@@ -72,12 +72,6 @@ checkpoints/
 mlruns/
 
 # ==============================
-# Generated outputs
-# ==============================
-outputs/
-reports/generated/
-
-# ==============================
 # Large competition datasets
 # ==============================
 # Keep dataset documentation, but do not commit raw CSV files.
