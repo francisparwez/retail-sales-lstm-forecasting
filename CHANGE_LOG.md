@@ -80,5 +80,21 @@ This file records significant changes, completed tasks, and project milestones.
 
 ## Upcoming work
 
-- Final repository review.
+- Final review of notebook cells, saved outputs, and documentation.
 - Commit and push the completed project to GitHub.
+
+## [2026-10-12] — Task 5: Results Visualisation & Project Delivery
+
+### Added / updated
+
+- Started `notebooks/04_results_visualisation.ipynb` for model-result presentation and interpretation.
+- Added a comparison of the naive baseline and LSTM model configurations using MAE and RMSE.
+- Documented findings, forecasting setup, and limitations, including the provisional zero-filled Christmas dates and rolling one-day-ahead evaluation.
+- Updated project documentation to include the Task 5 notebook and the intended comparison figure, `outputs/figures/11_model_performance_comparison.png`.
+
+### Final verification required
+
+- Confirm the comparison figure exists and is saved.
+- Confirm metric values match the latest Task 4 evaluation output; older runs have produced different results.
+- Verify all linked figure files exist before final commit.
+- Commit and push the final documentation and notebook.
