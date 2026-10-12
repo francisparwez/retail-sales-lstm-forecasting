@@ -8,9 +8,9 @@
 
 **Business context:** Historical retail sales forecasting using data from Corporación Favorita in Ecuador.
 
-**Current stage:** LSTM model development, training, and initial evaluation completed; final documentation and repository delivery remain.
+**Current stage:** Tasks 1–4 completed; final documentation and repository delivery remain.
 
-The project now includes a naive baseline and an LSTM model trained on 30-day sequences to predict next-day sales. Evaluation on the held-out test period showed lower MAE and RMSE for the LSTM than for the baseline.
+The project includes a naive baseline and two LSTM configurations trained on 30-day sequences to predict next-day sales. Both LSTMs achieved lower MAE and RMSE than the baseline on the same held-out test period.
 
 ## 2. Source Dataset Overview
 
@@ -142,27 +142,32 @@ The prepared daily sales plot is saved as:
 
 ### Test results
 
-| Model          |        MAE |       RMSE |
-| -------------- | ---------: | ---------: |
-| Naive baseline | 165,347.39 | 227,751.17 |
-| LSTM           |  93,248.46 | 148,042.64 |
+| Model           |           MAE |           RMSE |
+| --------------- | ------------: | -------------: |
+| Naive baseline  |    165,347.39 |     227,751.17 |
+| LSTM — 32 units |     96,164.54 |     153,011.12 |
+| LSTM — 64 units | **93,789.06** | **149,901.76** |
 
-On this test period, the LSTM reduced MAE by approximately 43.6% and RMSE by approximately 35.0% compared with the naive baseline. This is an encouraging result for the chosen evaluation setup, not a guarantee of performance on other periods.
+The 64-unit LSTM achieved the best test MAE and RMSE, reducing the baseline MAE by approximately 43.3% and RMSE by approximately 34.2%. The 32-unit model had slightly better best validation loss, so model selection depends on whether validation performance or the held-out test metrics are prioritised. These results apply to the selected test period and do not guarantee performance on other periods.
 
 ### Modelling figures
 
 - `outputs/figures/08_lstm_training_validation_loss.png`
 - `outputs/figures/09_actual_vs_predicted_sales.png`
+- `outputs/figures/10_lstm_prediction_errors.png`
 
-### Limitation
+### Error analysis and limitations
 
-The four missing Christmas dates were provisionally filled with zero sales. These are assumed values, not observed sales, and their effect should be considered when interpreting the model results.
+Prediction errors were summarised using mean error, median absolute error, 90th percentile absolute error, and maximum absolute error. The residual plot is saved as `outputs/figures/10_lstm_prediction_errors.png`.
+
+The four missing Christmas dates were provisionally filled with zero sales. These are assumed values, not observed sales, and their effect should be considered when interpreting the model results. Evaluation is rolling one-day-ahead: the previous day's actual value is available for each next-day prediction, so this is not a multi-day forecast generated entirely in advance.
 
 ## 8. Current Project Status
 
 ### Completed
 
 - Project structure and dataset collection.
+- Baseline evaluation, comparison of 32-unit and 64-unit LSTMs, and prediction-error analysis.
 - Initial exploratory data analysis.
 - Six EDA visualisations.
 - Data-quality checks and date conversion.
@@ -174,8 +179,7 @@ The four missing Christmas dates were provisionally filled with zero sales. Thes
 
 ### Remaining
 
-- Review the notebook for redundant cells and ensure all outputs are saved.
-- Finalise documentation and dependency versions.
+- Final check that the notebook and generated files are saved.
 - Commit and push the finished project to GitHub.
 
 ## 9. Next Steps

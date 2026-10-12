@@ -80,5 +80,5 @@ This file records significant changes, completed tasks, and project milestones.
 
 ## Upcoming work
 
-- Final review of notebook cells, saved outputs, and documentation.
+- Final repository review.
 - Commit and push the completed project to GitHub.

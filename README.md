@@ -6,7 +6,7 @@ This project explores historical retail sales data and aims to forecast future s
 
 The project uses the **Kaggle Store Sales – Time Series Forecasting** dataset, based on retail sales from Corporación Favorita in Ecuador. It follows a structured workflow, beginning with exploratory data analysis (EDA), followed by time series preparation, baseline forecasting, LSTM model development, and performance evaluation.
 
-The EDA, data preprocessing, and initial LSTM modelling stages have been completed using Python, Pandas, NumPy, Matplotlib, Scikit-learn, and TensorFlow/Keras. The project includes six EDA visualisations, a prepared daily sales series, a naive baseline, an LSTM model, and test-period forecast comparisons.
+The EDA, data preprocessing, LSTM modelling, and model evaluation stages have been completed using Python, Pandas, NumPy, Matplotlib, Scikit-learn, and TensorFlow/Keras. The project includes six EDA visualisations, a prepared daily sales series, a naive baseline, two LSTM configurations, test-period forecast comparisons, and prediction-error analysis.
 
 The project is being developed as a practical learning and portfolio project in time series analysis, deep learning, and predictive analytics.
 
@@ -86,15 +86,15 @@ The modelling workflow uses a 30-day lookback to predict the next day's sales. D
 
 ### Task 3: LSTM Model Development & Training — Completed
 
-Created 30-day sequential input windows, established a rolling one-day-ahead naive baseline, and trained an LSTM model with 32 units, dropout, and early stopping. The model was trained using chronological training and validation periods.
+Created 30-day sequential input windows, established a rolling one-day-ahead naive baseline, and trained a 32-unit LSTM with dropout and early stopping. A second LSTM configuration with 64 units was trained for comparison. Scaling was fitted on the model-training period only, and chronological training, validation, and test periods were used.
 
 ### Task 4: Model Evaluation & Optimisation — Completed
 
-Evaluated the LSTM on the held-out test period using MAE and RMSE. The LSTM performed better than the naive baseline on both metrics in this test setup. The comparison uses rolling one-day-ahead predictions, where the previous day's actual sales are available for the next prediction.
+Compared the naive baseline and two LSTM configurations on the same 338-observation test period using MAE and RMSE. Both LSTM configurations outperformed the baseline on both metrics. The 64-unit LSTM achieved the lowest test MAE and RMSE, while the 32-unit model had slightly better best validation loss. The comparison uses rolling one-day-ahead predictions, where the previous day's actual sales are available for the next prediction. Prediction errors were also summarised and visualised.
 
 ### Task 5: Results Visualisation & Project Delivery — In Progress
 
-Saved the training/validation loss plot and actual-versus-predicted sales plot. Documentation and repository cleanup are being finalised. The provisional zero values for missing Christmas dates remain a limitation.
+Saved the training/validation loss plot, actual-versus-predicted sales plot, and prediction-error plot. Documentation and repository delivery are being finalised. The provisional zero values for missing Christmas dates remain a limitation.
 
 ## 📊 Exploratory Data Analysis
 
@@ -189,24 +189,25 @@ The loss curves show the model's training and validation performance across epoc
 
 This plot compares the actual test-period sales with the naive baseline and LSTM predictions. The sharp dips around Christmas reflect the provisional zero values in the prepared data.
 
-## 📊 Model Evaluation
+## 📊 Model Evaluation & Optimisation
 
-The LSTM uses the previous 30 days of daily sales to predict the next day's sales. A chronological split was used, with a validation period for monitoring training and a separate final test period for evaluation.
+The models use the previous 30 days of daily sales to predict the next day's sales. A chronological split was used, with a validation period for monitoring training and a separate final test period for evaluation. The final comparison uses the same 338 test observations for each model.
 
-The test results are:
+| Model           |           MAE |           RMSE |
+| --------------- | ------------: | -------------: |
+| Naive baseline  |    165,347.39 |     227,751.17 |
+| LSTM — 32 units |     96,164.54 |     153,011.12 |
+| LSTM — 64 units | **93,789.06** | **149,901.76** |
 
-| Model          |        MAE |       RMSE |
-| -------------- | ---------: | ---------: |
-| Naive baseline | 165,347.39 | 227,751.17 |
-| LSTM           |  93,248.46 | 148,042.64 |
+Compared with the naive baseline, the 64-unit LSTM reduced test MAE by approximately **43.3%** and RMSE by approximately **34.2%**. The 64-unit model had the best test metrics; however, the 32-unit model had slightly better best validation loss. The 32-unit model is therefore a defensible choice if model selection is based primarily on validation loss, while the 64-unit model is the best performer on this particular held-out test set.
 
-On this test period, the LSTM reduced MAE by approximately **43.6%** and RMSE by approximately **35.0%** compared with the naive baseline.
+Prediction errors were also examined using mean error, median absolute error, the 90th percentile absolute error, and maximum absolute error. The residual plot is saved as `outputs/figures/10_lstm_prediction_errors.png`.
 
 - **MAE (Mean Absolute Error):** average absolute difference between actual and predicted sales.
 - **RMSE (Root Mean Squared Error):** gives greater weight to larger prediction errors.
 - **Baseline comparison:** checks whether the LSTM improves on a simpler forecasting approach.
 
-These results apply to the chosen period and rolling one-day-ahead evaluation setup. They do not guarantee similar performance on other periods. The four zero-filled Christmas dates are an assumption and may affect training and evaluation.
+These results apply only to the selected test period and rolling one-day-ahead evaluation setup. They do not guarantee similar performance on other periods. This setup assumes the previous day's actual sales are available for each next-day prediction; it is not a multi-day forecast made entirely in advance. The four zero-filled Christmas dates are assumptions rather than observed sales and may affect training and evaluation.
 
 ## 📁 Project Structure
 
@@ -241,7 +242,7 @@ The `outputs/figures/` directory is tracked so the project's visualisations are 
 
 ## ⚠️ Current Status
 
-**Stage:** Tasks 1–4 completed; final project documentation and repository delivery being finalised.
+**Stage:** Tasks 1–4 completed; final documentation and GitHub delivery are the remaining steps.
 
 - [x] Create the project repository.
 - [x] Establish the project folder structure.
@@ -258,7 +259,9 @@ The `outputs/figures/` directory is tracked so the project's visualisations are 
 - [x] Establish a naive baseline forecast.
 - [x] Develop and train the LSTM model.
 - [x] Evaluate and compare forecasting performance using MAE and RMSE.
-- [x] Save the training-loss and forecast comparison figures.
+- [x] Save the training-loss, forecast comparison, and prediction-error figures.
+- [x] Compare 32-unit and 64-unit LSTM configurations.
+- [x] Summarise prediction-error statistics.
 - [x] Document the missing-Christmas-date assumption and evaluation limitation.
 - [ ] Final repository review and Git commit.
 
