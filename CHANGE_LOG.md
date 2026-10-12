@@ -52,19 +52,33 @@ This file records significant changes, completed tasks, and project milestones.
 - Updated the README to describe Tasks 1 and 2, the prepared series, the file structure, and the missing-date assumption.
 - Updated the project summary to include preprocessing results and next steps.
 
-### Pending
+## [2026-10-12] — Task 3: LSTM Model Development & Training
 
-- Define the forecast target horizon and chronological validation strategy.
-- Establish a baseline forecast.
-- Prepare sequential input windows.
-- Develop and train the LSTM.
-- Evaluate the LSTM against the baseline.
-- Document final results and limitations.
+### Added
+
+- `notebooks/03_lstm_model_development.ipynb`.
+- A naive rolling one-day-ahead baseline forecast.
+- A 30-day sequence preparation workflow with training-only scaler fitting.
+- An LSTM model with 32 units, dropout, a dense output, and early stopping.
+- `outputs/figures/08_lstm_training_validation_loss.png`.
+- `outputs/figures/09_actual_vs_predicted_sales.png`.
+
+### Model evaluation
+
+- Evaluated 338 test-period predictions using MAE and RMSE.
+- Naive baseline: MAE 165,347.39; RMSE 227,751.17.
+- LSTM: MAE 93,248.46; RMSE 148,042.64.
+- In this test period, the LSTM reduced MAE by approximately 43.6% and RMSE by approximately 35.0% compared with the baseline.
+- Evaluation represents rolling one-day-ahead predictions, not a single multi-day forecast generated in advance.
+
+### Limitations and documentation
+
+- Retained the documented caveat that four Christmas dates were provisionally filled with zero sales.
+- Updated the project status and results for final documentation and repository delivery.
 
 ---
 
-## Upcoming milestones
+## Upcoming work
 
-- **Task 3:** LSTM Model Development & Training.
-- **Task 4:** Model Evaluation & Optimisation.
-- **Task 5:** Results Visualisation & Project Delivery.
+- Final review of notebook cells, saved outputs, and documentation.
+- Commit and push the completed project to GitHub.

@@ -6,7 +6,7 @@ This project explores historical retail sales data and aims to forecast future s
 
 The project uses the **Kaggle Store Sales – Time Series Forecasting** dataset, based on retail sales from Corporación Favorita in Ecuador. It follows a structured workflow, beginning with exploratory data analysis (EDA), followed by time series preparation, baseline forecasting, LSTM model development, and performance evaluation.
 
-The initial EDA and data preprocessing stages have been completed using Python, Pandas, NumPy, and Matplotlib. The project now includes six EDA visualisations and a prepared daily sales series, with the preprocessing steps and assumptions documented in the notebook.
+The EDA, data preprocessing, and initial LSTM modelling stages have been completed using Python, Pandas, NumPy, Matplotlib, Scikit-learn, and TensorFlow/Keras. The project includes six EDA visualisations, a prepared daily sales series, a naive baseline, an LSTM model, and test-period forecast comparisons.
 
 The project is being developed as a practical learning and portfolio project in time series analysis, deep learning, and predictive analytics.
 
@@ -63,13 +63,8 @@ The project currently uses:
 - **NumPy** — numerical computing.
 - **Matplotlib** — data visualisation.
 - **Jupyter Notebook** — interactive analysis and documentation.
-
-The planned modelling stage may additionally use:
-
-- **Scikit-learn** — preprocessing and evaluation metrics.
+- **Scikit-learn** — scaling, chronological modelling workflow support, and regression evaluation metrics.
 - **TensorFlow/Keras** — LSTM model development and training.
-
-Dependencies will be updated as new libraries are introduced into the implementation.
 
 ## 🗺️ Project Workflow
 
@@ -87,19 +82,19 @@ Converted the date column to datetime, checked data quality, aggregated sales ac
 
 The four missing dates are Christmas Days in 2013–2016. They are provisionally represented as zero sales based on the holiday-calendar evidence; these values were not observed in the original sales data and should be reconsidered during modelling.
 
-The forecasting horizon, chronological training/validation/test splits, and final modelling strategy remain to be defined.
+The modelling workflow uses a 30-day lookback to predict the next day's sales. Data is split chronologically into a model-training period, validation period, and held-out test period. The reported test evaluation is rolling one-day-ahead forecasting rather than a single multi-day forecast made entirely in advance.
 
-### Task 3: LSTM Model Development & Training — Pending
+### Task 3: LSTM Model Development & Training — Completed
 
-Prepare sequential input windows, establish a baseline forecast, design an LSTM neural network, and train the model to predict future retail sales.
+Created 30-day sequential input windows, established a rolling one-day-ahead naive baseline, and trained an LSTM model with 32 units, dropout, and early stopping. The model was trained using chronological training and validation periods.
 
-### Task 4: Model Evaluation & Optimisation — Pending
+### Task 4: Model Evaluation & Optimisation — Completed
 
-Evaluate forecasting performance using suitable metrics, compare the LSTM against the baseline, analyse prediction errors, and refine the model where justified.
+Evaluated the LSTM on the held-out test period using MAE and RMSE. The LSTM performed better than the naive baseline on both metrics in this test setup. The comparison uses rolling one-day-ahead predictions, where the previous day's actual sales are available for the next prediction.
 
-### Task 5: Results Visualisation & Project Delivery — Pending
+### Task 5: Results Visualisation & Project Delivery — In Progress
 
-Visualise forecasts and prediction errors, interpret the results in a retail context, document limitations, and organise the project for reproducibility and portfolio presentation.
+Saved the training/validation loss plot and actual-versus-predicted sales plot. Documentation and repository cleanup are being finalised. The provisional zero values for missing Christmas dates remain a limitation.
 
 ## 📊 Exploratory Data Analysis
 
@@ -182,15 +177,36 @@ The exported CSV was reloaded and checked. Dates matched exactly, and sales valu
 
 The plot provides a visual check of the prepared daily series, including its overall trend and day-to-day fluctuations. The zero-valued Christmas dates appear as sharp dips. These values should be interpreted in light of the documented assumption above rather than as directly recorded sales.
 
-## 📊 Evaluation Strategy
+### LSTM Training and Validation Loss
 
-Model performance will be assessed using suitable forecasting metrics, including:
+![LSTM Training and Validation Loss](outputs/figures/08_lstm_training_validation_loss.png)
 
-- **MAE (Mean Absolute Error):** measures the average absolute difference between actual and predicted sales.
+The loss curves show the model's training and validation performance across epochs. The validation loss was used for early stopping and to restore the best model weights.
+
+### Actual Sales vs Forecasts
+
+![Actual Sales vs Predicted Daily Retail Sales](outputs/figures/09_actual_vs_predicted_sales.png)
+
+This plot compares the actual test-period sales with the naive baseline and LSTM predictions. The sharp dips around Christmas reflect the provisional zero values in the prepared data.
+
+## 📊 Model Evaluation
+
+The LSTM uses the previous 30 days of daily sales to predict the next day's sales. A chronological split was used, with a validation period for monitoring training and a separate final test period for evaluation.
+
+The test results are:
+
+| Model          |        MAE |       RMSE |
+| -------------- | ---------: | ---------: |
+| Naive baseline | 165,347.39 | 227,751.17 |
+| LSTM           |  93,248.46 | 148,042.64 |
+
+On this test period, the LSTM reduced MAE by approximately **43.6%** and RMSE by approximately **35.0%** compared with the naive baseline.
+
+- **MAE (Mean Absolute Error):** average absolute difference between actual and predicted sales.
 - **RMSE (Root Mean Squared Error):** gives greater weight to larger prediction errors.
-- **Baseline comparison:** determines whether the LSTM improves on a simpler forecasting approach.
+- **Baseline comparison:** checks whether the LSTM improves on a simpler forecasting approach.
 
-The forecasting horizon, target granularity, validation strategy, and final metrics will be defined during the preprocessing and modelling stages. Results will be documented after the models have been trained and evaluated.
+These results apply to the chosen period and rolling one-day-ahead evaluation setup. They do not guarantee similar performance on other periods. The four zero-filled Christmas dates are an assumption and may affect training and evaluation.
 
 ## 📁 Project Structure
 
@@ -200,7 +216,8 @@ retail-sales-lstm-forecasting/
 │   └── *.csv                         # Local raw datasets; excluded from Git
 ├── notebooks/
 │   ├── 01_exploratory_data_analysis.ipynb
-│   └── 02_data_preprocessing.ipynb
+│   ├── 02_data_preprocessing.ipynb
+│   └── 03_lstm_model_development.ipynb
 ├── outputs/
 │   ├── processed/
 │   │   └── daily_sales.csv
@@ -211,18 +228,20 @@ retail-sales-lstm-forecasting/
 │       ├── 04_top_stores.png
 │       ├── 05_top_product_families.png
 │       ├── 06_holiday_sales_comparison.png
-│       └── 07_daily_sales_plot.png
+│       ├── 07_daily_sales_plot.png
+│       ├── 08_lstm_training_validation_loss.png
+│       └── 09_actual_vs_predicted_sales.png
 ├── CHANGE_LOG.md
 ├── README.md
 ├── requirements.txt
 └── SUMMARY.md
 ```
 
-The `outputs/figures/` directory is tracked so the EDA visualisations can be displayed directly in this README. Raw dataset files are excluded from Git tracking.
+The `outputs/figures/` directory is tracked so the project's visualisations are available in the repository. Raw dataset files are excluded from Git tracking.
 
 ## ⚠️ Current Status
 
-**Stage:** Tasks 1 and 2 — Project Setup, Exploratory Data Analysis, and Data Preprocessing completed.
+**Stage:** Tasks 1–4 completed; final project documentation and repository delivery being finalised.
 
 - [x] Create the project repository.
 - [x] Establish the project folder structure.
@@ -235,17 +254,17 @@ The `outputs/figures/` directory is tracked so the EDA visualisations can be dis
 - [x] Complete data preprocessing and time series preparation.
 - [x] Create and validate a continuous daily sales series.
 - [x] Save and verify `outputs/processed/daily_sales.csv`.
-- [ ] Define the forecasting target and horizon.
-- [ ] Establish a baseline forecasting model.
-- [ ] Develop and train the LSTM model.
-- [ ] Evaluate and compare forecasting performance.
-- [ ] Document final findings and limitations.
+- [x] Define the one-day-ahead forecasting target and 30-day lookback.
+- [x] Establish a naive baseline forecast.
+- [x] Develop and train the LSTM model.
+- [x] Evaluate and compare forecasting performance using MAE and RMSE.
+- [x] Save the training-loss and forecast comparison figures.
+- [x] Document the missing-Christmas-date assumption and evaluation limitation.
+- [ ] Final repository review and Git commit.
 
 ## 🔮 Expected Outcome
 
-The intended outcome is an end-to-end retail sales forecasting project demonstrating how LSTM neural networks can be applied to historical retail sales data.
-
-The project will compare an LSTM model with a baseline approach, evaluate its predictive performance, and investigate whether it captures useful temporal patterns. Conclusions will be based on the evaluation results rather than assuming that an LSTM will necessarily outperform simpler methods.
+The project demonstrates an end-to-end retail sales forecasting workflow, from EDA and daily time-series preparation to baseline forecasting, LSTM training, evaluation, and visualisation. In the current test period, the LSTM outperformed the naive baseline on both MAE and RMSE. The result should be interpreted in context: it uses rolling one-day-ahead predictions and the prepared series includes four provisionally zero-filled Christmas dates.
 
 ## 🔗 References
 

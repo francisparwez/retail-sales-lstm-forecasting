@@ -8,9 +8,9 @@
 
 **Business context:** Historical retail sales forecasting using data from Corporación Favorita in Ecuador.
 
-**Current stage:** Tasks 1 and 2 — Project Setup, Exploratory Data Analysis, and Data Preprocessing & Time Series Preparation completed.
+**Current stage:** LSTM model development, training, and initial evaluation completed; final documentation and repository delivery remain.
 
-The project explores historical sales patterns and prepares a daily sales series for the next forecasting stages. A baseline and LSTM will be developed and compared later.
+The project now includes a naive baseline and an LSTM model trained on 30-day sequences to predict next-day sales. Evaluation on the held-out test period showed lower MAE and RMSE for the LSTM than for the baseline.
 
 ## 2. Source Dataset Overview
 
@@ -121,7 +121,44 @@ The prepared daily sales plot is saved as:
 
 - `07_daily_sales_plot.png`
 
-## 7. Current Project Status
+## 7. Task 3 — LSTM Model Development & Training
+
+### Modelling setup
+
+- Notebook: `notebooks/03_lstm_model_development.ipynb`.
+- Target: total daily sales across stores and product families.
+- Lookback window: 30 previous days to predict the next day.
+- Input format: 3D LSTM arrays with one feature per day.
+- Scaling: `MinMaxScaler` fitted on the model-training period only.
+- Model: one LSTM layer with 32 units, 20% dropout, and one dense output.
+- Training: Adam optimiser, MSE loss, MAE metric, validation monitoring, and early stopping.
+
+### Data splits
+
+- Model training: 1,080 observations, producing 1,050 sequences.
+- Validation: 270 observations and 270 validation sequences.
+- Final test: 338 observations and 338 test sequences.
+- Evaluation uses rolling one-day-ahead predictions, where the previous day's actual value is available for the next prediction.
+
+### Test results
+
+| Model          |        MAE |       RMSE |
+| -------------- | ---------: | ---------: |
+| Naive baseline | 165,347.39 | 227,751.17 |
+| LSTM           |  93,248.46 | 148,042.64 |
+
+On this test period, the LSTM reduced MAE by approximately 43.6% and RMSE by approximately 35.0% compared with the naive baseline. This is an encouraging result for the chosen evaluation setup, not a guarantee of performance on other periods.
+
+### Modelling figures
+
+- `outputs/figures/08_lstm_training_validation_loss.png`
+- `outputs/figures/09_actual_vs_predicted_sales.png`
+
+### Limitation
+
+The four missing Christmas dates were provisionally filled with zero sales. These are assumed values, not observed sales, and their effect should be considered when interpreting the model results.
+
+## 8. Current Project Status
 
 ### Completed
 
@@ -137,27 +174,20 @@ The prepared daily sales plot is saved as:
 
 ### Remaining
 
-- Define the forecasting horizon and evaluation strategy.
-- Create chronological training, validation, and test splits.
-- Establish a baseline forecast.
-- Prepare sequential input windows.
-- Build and train the LSTM model.
-- Compare model performance with the baseline.
-- Visualise forecasts and document final conclusions.
+- Review the notebook for redundant cells and ensure all outputs are saved.
+- Finalise documentation and dependency versions.
+- Commit and push the finished project to GitHub.
 
-## 8. Next Steps
+## 9. Next Steps
 
-1. Decide the forecast horizon and evaluation period before modelling.
-2. Revisit the zero-sales assumption for missing Christmas dates.
-3. Define chronological training, validation, and test periods to avoid data leakage.
-4. Build a simple baseline forecast.
-5. Prepare sequential inputs for the LSTM.
-6. Evaluate forecasts using metrics such as MAE and RMSE.
-7. Compare the LSTM with the baseline and document limitations.
+1. Review the notebook and confirm saved outputs.
+2. Finalise the README, summary, change log, and requirements.
+3. Commit the completed work to GitHub.
+4. If the project is extended, revisit the zero-sales assumption for missing Christmas dates and test the model on additional forecasting periods.
 
-## 9. Data and Repository Notes
+## 10. Data and Repository Notes
 
 - Raw CSV files remain local in `datasets/` and are excluded from Git.
 - The processed daily series is stored in `outputs/processed/daily_sales.csv`.
 - Figures are retained in `outputs/figures/` for use in the README.
-- `requirements.txt` currently lists the libraries used in Tasks 1 and 2; modelling dependencies will be added when required.
+- `requirements.txt` lists the libraries used for EDA, preprocessing, modelling, and evaluation.
